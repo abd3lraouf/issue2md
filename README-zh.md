@@ -21,7 +21,9 @@ $ go install github.com/bigwhite/issue2md/cmd/issue2md@latest
   markdown-file  (可选) 输出的Markdown文件。
 标志:
   -enable-reactions
-    	在输出中包含reactgions。
+    	在输出中包含reactions。
+  -enable-user-links
+    	在输出中包含评论者的profile链接
 ```
 
 ## 网页模式

@@ -24,6 +24,8 @@ Arguments:
 Flags:
   -enable-reactions
     	Include reactions in the output.
+  -enable-user-links
+    	Enable user profile links in the output.
 ```
 
 ## Web Mode
