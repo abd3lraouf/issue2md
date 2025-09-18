@@ -19,6 +19,14 @@ type Issue struct {
 	Reactions []Reaction `json:"-"`
 }
 
+func (i *Issue) ItemNumber() int {
+	return i.Number
+}
+
+func (i *Issue) SetReactions(reactions []Reaction) {
+	i.Reactions = reactions
+}
+
 type PullRequest struct {
 	Title     string     `json:"title"`
 	Body      string     `json:"body"`
@@ -27,6 +35,14 @@ type PullRequest struct {
 	Comments  int        `json:"comments"`
 	User      User       `json:"user"`
 	Reactions []Reaction `json:"-"`
+}
+
+func (pr *PullRequest) ItemNumber() int {
+	return pr.Number
+}
+
+func (pr *PullRequest) SetReactions(reactions []Reaction) {
+	pr.Reactions = reactions
 }
 
 type Discussion struct {
@@ -59,6 +75,11 @@ type Reaction struct {
 
 type User struct {
 	Login string `json:"login"`
+}
+
+type reactionable interface {
+	ItemNumber() int
+	SetReactions([]Reaction)
 }
 
 var sharedHTTPClient = &http.Client{}
@@ -95,6 +116,15 @@ func ParseURL(issueURL string) (owner, repo string, number int, issueType string
 	return owner, repo, issueNumber, issueType, nil
 }
 
+func fetchAndSetReactions(item reactionable, owner, repo, token string) error {
+	reactions, err := FetchReactionsForPullRequestOrIssue(owner, repo, item.ItemNumber(), token)
+	if err != nil {
+		return fmt.Errorf("failed to fetch reactions in %s/%s for item %d: %v. Ensure you have set a valid GITHUB_TOKEN", owner, repo, item.ItemNumber(), err)
+	}
+	item.SetReactions(reactions)
+	return nil
+}
+
 func FetchIssue(owner, repo string, issueNumber int, token string, enableReactions bool) (*Issue, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/issues/%d", owner, repo, issueNumber)
 
@@ -123,11 +153,9 @@ func FetchIssue(owner, repo string, issueNumber int, token string, enableReactio
 	}
 
 	if enableReactions {
-		reactions, err := FetchReactionsForPullRequestOrIssue(owner, repo, issue.Number, token)
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch reactions in %s/%s issue %d: %v. Ensure you have set a valid GITHUB_TOKEN", owner, repo, issue.Number, err)
+		if err := fetchAndSetReactions(&issue, owner, repo, token); err != nil {
+			return nil, err
 		}
-		issue.Reactions = reactions
 	}
 
 	return &issue, nil
@@ -161,11 +189,9 @@ func FetchPullRequest(owner, repo string, pullNumber int, token string, enableRe
 	}
 
 	if enableReactions {
-		reactions, err := FetchReactionsForPullRequestOrIssue(owner, repo, pullRequest.Number, token)
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch reactions in %s/%s PR %d: %v. Ensure you have set a valid GITHUB_TOKEN", owner, repo, pullRequest.Number, err)
+		if err := fetchAndSetReactions(&pullRequest, owner, repo, token); err != nil {
+			return nil, err
 		}
-		pullRequest.Reactions = reactions
 	}
 
 	return &pullRequest, nil
