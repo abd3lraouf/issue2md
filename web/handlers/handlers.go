@@ -44,7 +44,11 @@ func ConvertHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := os.Getenv("GITHUB_TOKEN")
+	// Get token: form field takes precedence over environment variable
+	token := r.FormValue("github_token")
+	if token == "" {
+		token = os.Getenv("GITHUB_TOKEN")
+	}
 
 	var markdown string
 	var filename string

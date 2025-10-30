@@ -119,7 +119,7 @@ func ParseURL(issueURL string) (owner, repo string, number int, issueType string
 func fetchAndSetReactions(item reactionable, owner, repo, token string) error {
 	reactions, err := FetchReactionsForPullRequestOrIssue(owner, repo, item.ItemNumber(), token)
 	if err != nil {
-		return fmt.Errorf("failed to fetch reactions in %s/%s for item %d: %v. Ensure you have set a valid GITHUB_TOKEN", owner, repo, item.ItemNumber(), err)
+		return fmt.Errorf("failed to fetch reactions in %s/%s for item %d: %v. Ensure you have provided a valid GitHub token", owner, repo, item.ItemNumber(), err)
 	}
 	item.SetReactions(reactions)
 	return nil
@@ -233,7 +233,7 @@ func FetchComments(owner, repo string, issueNumber int, token string, enableReac
 			for i := range currentComments {
 				reactions, err := FetchReactionsForComment(owner, repo, currentComments[i].ID, token)
 				if err != nil {
-					return nil, fmt.Errorf("failed to fetch reactions for comment %d in %s/%s issue %d: %v. Ensure you have set a valid GITHUB_TOKEN", currentComments[i].ID, owner, repo, issueNumber, err)
+					return nil, fmt.Errorf("failed to fetch reactions for comment %d in %s/%s issue %d: %v. Ensure you have provided a valid GitHub token", currentComments[i].ID, owner, repo, issueNumber, err)
 				}
 				currentComments[i].Reactions = reactions
 			}
@@ -372,7 +372,7 @@ func FetchDiscussionComments(owner, repo string, discussionNumber int, token str
 			for i := range currentComments {
 				reactions, err := FetchReactionsForComment(owner, repo, currentComments[i].ID, token)
 				if err != nil {
-					return nil, fmt.Errorf("failed to fetch reactions for comment %d in %s/%s discussion %d: %v. Ensure you have set a valid GITHUB_TOKEN", currentComments[i].ID, owner, repo, discussionNumber, err)
+					return nil, fmt.Errorf("failed to fetch reactions for comment %d in %s/%s discussion %d: %v. Ensure you have provided a valid GitHub token", currentComments[i].ID, owner, repo, discussionNumber, err)
 				}
 				currentComments[i].Reactions = reactions
 			}

@@ -12,6 +12,8 @@
         <h1>Github Issue, Discussion, or Pull Request To Markdown</h1>
         <form action="/convert" method="post">
             <input type="text" name="issue_url" placeholder="https://github.com/owner/repo/issues_or_pull/number" required>
+            <input type="password" name="github_token" placeholder="GitHub Token (optional)" autocomplete="off">
+            <p class="help-text">Optional: Provide a token for higher rate limits or private repos. Leave empty to use server's token.</p>
             <button type="submit">Convert</button>
         </form>
     </div>

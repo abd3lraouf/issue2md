@@ -10,6 +10,7 @@ import (
 	"github.com/bigwhite/issue2md/internal/github"
 )
 
+var token = flag.String("token", "", "GitHub personal access token (overrides GITHUB_TOKEN environment variable)")
 var enableReactions = flag.Bool("enable-reactions", false, "Include reactions in the output.")
 var enableUserLinks = flag.Bool("enable-user-links", false, "Enable user profile links in the output.")
 
@@ -45,18 +46,22 @@ func main() {
 		return
 	}
 
-	token := os.Getenv("GITHUB_TOKEN")
+	// Get token: CLI flag takes precedence over environment variable
+	tokenValue := *token
+	if tokenValue == "" {
+		tokenValue = os.Getenv("GITHUB_TOKEN")
+	}
 
 	var markdown string
 	switch itemType {
 	case "issue":
-		issue, err := github.FetchIssue(owner, repo, itemNumber, token, *enableReactions)
+		issue, err := github.FetchIssue(owner, repo, itemNumber, tokenValue, *enableReactions)
 		if err != nil {
 			fmt.Printf("Error fetching issue: %v\n", err)
 			return
 		}
 
-		comments, err := github.FetchComments(owner, repo, itemNumber, token, *enableReactions, *enableUserLinks)
+		comments, err := github.FetchComments(owner, repo, itemNumber, tokenValue, *enableReactions, *enableUserLinks)
 		if err != nil {
 			fmt.Printf("Error fetching comments: %v\n", err)
 			return
@@ -64,14 +69,14 @@ func main() {
 		markdown = converter.IssueToMarkdown(issue, comments, *enableUserLinks)
 
 	case "pull":
-		pullRequest, err := github.FetchPullRequest(owner, repo, itemNumber, token, *enableReactions)
+		pullRequest, err := github.FetchPullRequest(owner, repo, itemNumber, tokenValue, *enableReactions)
 		if err != nil {
 			fmt.Printf("Error fetching pull request: %v\n", err)
 			return
 		}
 
 		// Pull Request comments are fetched via the issues API endpoint
-		comments, err := github.FetchComments(owner, repo, itemNumber, token, *enableReactions, *enableUserLinks)
+		comments, err := github.FetchComments(owner, repo, itemNumber, tokenValue, *enableReactions, *enableUserLinks)
 		if err != nil {
 			fmt.Printf("Error fetching comments: %v\n", err)
 			return
@@ -79,13 +84,13 @@ func main() {
 		markdown = converter.PullRequestToMarkdown(pullRequest, comments, *enableUserLinks)
 
 	case "discussion":
-		discussion, err := github.FetchDiscussion(owner, repo, itemNumber, token)
+		discussion, err := github.FetchDiscussion(owner, repo, itemNumber, tokenValue)
 		if err != nil {
 			fmt.Printf("Error fetching discussion: %v\n", err)
 			return
 		}
 
-		discussionComments, err := github.FetchDiscussionComments(owner, repo, itemNumber, token, *enableReactions)
+		discussionComments, err := github.FetchDiscussionComments(owner, repo, itemNumber, tokenValue, *enableReactions)
 		if err != nil {
 			fmt.Printf("Error fetching discussion comments: %v\n", err)
 			return
