@@ -9,7 +9,7 @@
 ### 安装issue2md命令行工具
 
 ```
-$ go install github.com/bigwhite/issue2md/cmd/issue2md@latest
+$ go install github.com/abd3lraouf/issue2md/cmd/issue2md@latest
 ```
 
 ### 将 Issue/Discussion/Pull Request 转换为Markdown
@@ -33,13 +33,13 @@ $ go install github.com/bigwhite/issue2md/cmd/issue2md@latest
 #### 基于Docker镜像运行(推荐)
 
 ```
-$docker run -d -p 8080:8080 bigwhite/issue2mdweb
+$ docker run -d -p 8080:8080 abd3lraouf/issue2mdweb
 ```
 
 #### 从源码构建安装
 
 ```
-$ git clone https://github.com/bigwhite/issue2md.git
+$ git clone https://github.com/abd3lraouf/issue2md.git
 $ make web
 $ ./issue2mdweb
 服务器正在运行在 http://0.0.0.0:8080

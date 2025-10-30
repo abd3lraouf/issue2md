@@ -1,3 +1,3 @@
-module github.com/bigwhite/issue2md
+module github.com/abd3lraouf/issue2md
 
-go 1.21.0
+go 1.25.3

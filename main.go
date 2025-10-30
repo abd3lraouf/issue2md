@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bigwhite/issue2md/web/handlers"
+	"github.com/abd3lraouf/issue2md/web/handlers"
 )
 
 func main() {

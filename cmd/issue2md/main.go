@@ -6,8 +6,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/bigwhite/issue2md/internal/converter"
-	"github.com/bigwhite/issue2md/internal/github"
+	"github.com/abd3lraouf/issue2md/internal/converter"
+	"github.com/abd3lraouf/issue2md/internal/github"
 )
 
 var token = flag.String("token", "", "GitHub personal access token (overrides GITHUB_TOKEN environment variable)")
